@@ -20,11 +20,11 @@ Console.ReadKey();
 static Config GetAwsConfig()
 {
     return new Config(
-        "00000",
+        "accountId",
         "https://sqs.us-east-1.amazonaws.com",
-        "0000",
-        "000000",
-        "00000");
+        "accessKey",
+        "secretAccessKey",
+        "sessionToken");
 }
 
 static Config GetLocalStackConfig()
