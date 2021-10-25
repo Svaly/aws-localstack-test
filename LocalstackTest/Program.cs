@@ -91,16 +91,18 @@ static async Task SendMessageAsync(Config config, AmazonSQSClient sqsClient)
 
 static async Task GetMessageAsync(Config config, AmazonSQSClient sqsClient)
 {
-    var response = await sqsClient.ReceiveMessageAsync(new ReceiveMessageRequest
+    var request = new ReceiveMessageRequest
     {
         QueueUrl = config.QueueUrl,
         MaxNumberOfMessages = 10,
         WaitTimeSeconds = 20,
+    };
 
-        // This line is the problem, program runs indefinitely with LocalStack
-        // when commented out works fine but downloads messages without any MessageAttributes
-        MessageAttributeNames = new List<string> {"All"}
-    });
+    // This line is the problem, program runs indefinitely with LocalStack
+    // when commented out works fine but downloads messages without any MessageAttributes
+    request.MessageAttributeNames.Add("All");
+    
+    var response = await sqsClient.ReceiveMessageAsync(request);
 
     Console.WriteLine("Message received");
     Console.WriteLine(JsonConvert.SerializeObject(response));
@@ -133,7 +135,7 @@ public class Config
     }
 
     public Config(string accountId, string serviceUrl, string awsAccessKeyId, string awsSecretAccessKey,
-        string sessionToken, string region = "us-east-1", string queueName = "spejson-test-queue")
+        string sessionToken, string region = "us-east-1", string queueName = "local-stack-test-queue")
     {
         AccountId = accountId;
         ServiceUrl = serviceUrl;
